@@ -38,7 +38,8 @@ export class User extends BaseEntity {
 
     @Column({
         unique: true,
-        length: 128
+        length: 128,
+        nullable: true
     })
     card_id: string;
 }

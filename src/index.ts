@@ -14,6 +14,7 @@ import process from 'process';
 import {myDataSource} from "./app-data-source";
 import {weeklyPlanRouter} from "./routes/about_weekly_plan";
 import {userPlanRouter} from "./routes/about_user";
+import {dailyPlanRouter} from "./routes/about_daily_plan";
 
 dotenv.config({path: '.env'});
 
@@ -108,6 +109,7 @@ myDataSource
             })
         );
         app.use(middleware());
+        app.use(dailyPlanRouter);
         app.use(userPlanRouter);
         app.use(weeklyPlanRouter);
         app.use(errorHandler());
