@@ -21,6 +21,20 @@ export class DailyPlan extends BaseEntity {
     })
     name: string;
 
+    @Column({
+        name: 'desc',
+        type: 'varchar',
+        length: 64
+    })
+    description: string;
+
+    @Column({
+        name: 'img',
+        type: 'varchar',
+        length: 64
+    })
+    image: string;
+
     @OneToMany(() => DailyPlanExercise, exercise => exercise.dailyPlan)
     exercises: DailyPlanExercise[];
 }

@@ -10,7 +10,7 @@ export class EmailPassword_Users {
     user_id: string;
 
     @OneToOne(() => User)
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn({ name: "id" })
     user: User;
 
     @Column({ type: 'varchar', length: 256 })

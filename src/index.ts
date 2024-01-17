@@ -12,6 +12,8 @@ import {Request, Response, NextFunction} from 'express';
 import dotenv from 'dotenv';
 import process from 'process';
 import {myDataSource} from "./app-data-source";
+import {weeklyPlanRouter} from "./routes/about_weekly_plan";
+import {userPlanRouter} from "./routes/about_user";
 
 dotenv.config({path: '.env'});
 
@@ -106,6 +108,8 @@ myDataSource
             })
         );
         app.use(middleware());
+        app.use(userPlanRouter);
+        app.use(weeklyPlanRouter);
         app.use(errorHandler());
         app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             res.status(500).send("Internal error: " + err.message);

@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: supertokens
       API_KEYS: 6tLLCUn1i7tFdV9tUr24
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - app_network
     restart: unless-stopped
@@ -25,7 +25,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "3567:3567"
+      - "127.0.0.1:3567:3567"
     environment:
       POSTGRESQL_CONNECTION_URI: "postgresql://pmd_admin:77+X70MT2exM@db:5432/supertokens"
     networks:

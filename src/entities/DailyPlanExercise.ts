@@ -22,6 +22,14 @@ export class DailyPlanExercise extends BaseEntity {
     @Column()
     order: number;
 
+    // serie
+    @Column()
+    sets: number;
+
+    // powtórzenia
     @Column()
     repetitions: number;
+
+    @Column()
+    interval: number;
 }

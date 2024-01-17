@@ -18,6 +18,6 @@ export class FinishedExercise extends BaseEntity {
     @Column()
     user_id: number;
 
-    @Column({ type: 'boolean', default: false })
-    isFinished: boolean;
+    @Column({ type: 'timestamp' })
+    when_finished: Date;
 }
