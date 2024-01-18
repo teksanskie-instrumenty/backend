@@ -5,7 +5,7 @@ import {
     PrimaryColumn,
     OneToMany,
     JoinColumn,
-    OneToOne
+    OneToOne, ManyToOne
 } from "typeorm";
 import { EmailPassword_Users } from "./EmailPassword_Users";
 import { WeeklyPlan } from "./WeeklyPlan";
@@ -27,7 +27,7 @@ export class User extends BaseEntity {
     ])
     emailPasswordUser: EmailPassword_Users;
 
-    @OneToMany(() => WeeklyPlan, weeklyPlan => weeklyPlan.user)
+    @ManyToOne(() => WeeklyPlan, weeklyPlan => weeklyPlan.user)
     weeklyPlans: WeeklyPlan[];
 
     @Column({

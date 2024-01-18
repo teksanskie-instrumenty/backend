@@ -7,25 +7,11 @@ import Session from "supertokens-node/recipe/session";
 import { SessionRequest } from "supertokens-node/framework/express";
 import {EmailPassword_Users} from "../entities/EmailPassword_Users";
 import { WeeklyPlan } from "../entities/WeeklyPlan";
+import {DailyPlan} from "../entities/DailyPlan";
 
 const router = express.Router();
 
-router.get("/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
-    try {
-        const userId = req.session!.getUserId();
-        const weeklyPlanRepository = myDataSource.getRepository(WeeklyPlan);
-        const userWeeklyPlan = await weeklyPlanRepository.findOne({ where: { user: { id: userId } } });
-
-        if (!userWeeklyPlan) {
-            return res.status(404).json({ error: 'Weekly plan not found' });
-        }
-
-        return res.status(200).json(userWeeklyPlan);
-    } catch (error) {
-        console.error('Error retrieving accounts:', error);
-        return res.status(500).json({error: 'Failed to retrieve accounts'});
-    }
-});
+// TODO: GET method to retrieve user's weekly plan
 
 router.post("/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {

@@ -6,15 +6,15 @@ import {
     ManyToOne
 } from "typeorm";
 import { DailyPlan } from "./DailyPlan";
-import {Exercise} from "./Exercise";
+import { Exercise } from "./Exercise";
 
 @Entity('daily_plan_exercise')
 export class DailyPlanExercise extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => DailyPlan, dailyPlan => dailyPlan.exercises)
-    dailyPlan: DailyPlan;
+    @ManyToOne(() => DailyPlan, dailyPlan => dailyPlan.exercises, { nullable: true })
+    dailyPlan?: DailyPlan;
 
     @ManyToOne(() => Exercise)
     exercise: Exercise;
@@ -22,11 +22,9 @@ export class DailyPlanExercise extends BaseEntity {
     @Column()
     order: number;
 
-    // serie
     @Column()
     sets: number;
 
-    // powtórzenia
     @Column()
     repetitions: number;
 

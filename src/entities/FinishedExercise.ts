@@ -5,7 +5,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne
 } from "typeorm";
-import {DailyPlanExercise} from "./DailyPlanExercise";
+import { DailyPlanExercise } from "./DailyPlanExercise";
 
 @Entity('finished_exercise')
 export class FinishedExercise extends BaseEntity {

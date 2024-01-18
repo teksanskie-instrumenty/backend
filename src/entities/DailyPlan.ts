@@ -16,7 +16,6 @@ export class DailyPlan extends BaseEntity {
     id: number;
 
     @Column({
-        unique: true,
         length: 32
     })
     name: string;

@@ -15,6 +15,9 @@ import {myDataSource} from "./app-data-source";
 import {weeklyPlanRouter} from "./routes/about_weekly_plan";
 import {userPlanRouter} from "./routes/about_user";
 import {dailyPlanRouter} from "./routes/about_daily_plan";
+import {exerciseRouter} from "./routes/about_exercise";
+import {stationRouter} from "./routes/about_station";
+import {dailyPlanExerciseRouter} from "./routes/about_daily_plan_exercise";
 
 dotenv.config({path: '.env'});
 
@@ -112,6 +115,9 @@ myDataSource
         app.use(dailyPlanRouter);
         app.use(userPlanRouter);
         app.use(weeklyPlanRouter);
+        app.use(exerciseRouter);
+        app.use(stationRouter);
+        app.use(dailyPlanExerciseRouter);
         app.use(errorHandler());
         app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             res.status(500).send("Internal error: " + err.message);

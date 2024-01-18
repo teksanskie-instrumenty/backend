@@ -11,7 +11,7 @@ import {DailyPlan} from "../entities/DailyPlan";
 
 const router = express.Router();
 
-router.get("/daily-plan/:id/exercises", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanId = parseInt(req.params.id);
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
@@ -28,10 +28,28 @@ router.get("/daily-plan/:id/exercises", verifySession(), async(req: SessionReque
             .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan.id })
             .getMany();
 
-        return res.status(200).json(dailyPlanExercises);
+        return res.status(200).json({ dailyPlan, dailyPlanExercises });
     } catch (error) {
-        console.error('Error retrieving daily plan exercises:', error);
-        return res.status(500).json({error: 'Failed to retrieve daily plan exercises'});
+        console.error('Error retrieving daily plan and its exercises:', error);
+        return res.status(500).json({error: 'Failed to retrieve daily plan and its exercises'});
+    }
+});
+
+router.post("/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+    try {
+        const { name, desc, img } = req.body;
+
+        const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
+        const newDailyPlan = new DailyPlan();
+        newDailyPlan.name = name;
+        newDailyPlan.description = desc;
+        newDailyPlan.image = img;
+        const savedDailyPlan = await dailyPlanRepository.save(newDailyPlan);
+
+        return res.status(201).json(savedDailyPlan);
+    } catch (error) {
+        console.error('Error creating daily plan:', error);
+        return res.status(500).json({error: 'Failed to create daily plan'});
     }
 });
 
