@@ -19,7 +19,7 @@ export class WeeklyPlan extends BaseEntity {
     /*@Column("int", { array: true })
     dayIds: number[];*/
 
-    @OneToMany(() => User, user => user.weeklyPlans)
+    @ManyToOne(() => User, user => user.weeklyPlans)
     user: User;
 
     @ManyToOne(() => DailyPlan)

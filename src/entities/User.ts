@@ -27,7 +27,7 @@ export class User extends BaseEntity {
     ])
     emailPasswordUser: EmailPassword_Users;
 
-    @ManyToOne(() => WeeklyPlan, weeklyPlan => weeklyPlan.user)
+    @OneToMany(() => WeeklyPlan, weeklyPlan => weeklyPlan.user)
     weeklyPlans: WeeklyPlan[];
 
     @Column({
