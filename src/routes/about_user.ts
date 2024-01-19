@@ -27,6 +27,26 @@ router.get("/user-info", verifySession(), async(req: SessionRequest, res: expres
     }
 });
 
+router.patch("/user-info", verifySession(), async(req: SessionRequest, res: express.Response) => {
+    try {
+        const userId = req.session!.getUserId();
+        const userRepository = myDataSource.getRepository(User);
+        const userInfo = await userRepository.findOne({ where: { id: userId } });
+
+        if (!userInfo) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const updatedUserInfo = userRepository.merge(userInfo, req.body);
+        const result = await userRepository.save(updatedUserInfo);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error('Error updating user information:', error);
+        return res.status(500).json({error: 'Failed to update user information'});
+    }
+});
+
 router.post("/signout", verifySession(), async (req: SessionRequest, res: express.Response) => {
     await req.session!.revokeSession();
 
