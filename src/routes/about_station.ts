@@ -12,7 +12,7 @@ import {Station} from "../entities/Station";
 
 const router = express.Router();
 
-router.get("/stations", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/stations", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const stationRepository = myDataSource.getRepository(Station);
         const stations = await stationRepository.find();
@@ -24,7 +24,7 @@ router.get("/stations", verifySession(), async(req: SessionRequest, res: express
     }
 });
 
-router.post("/station", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.post("/api/station", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const { name, color } = req.body;
         const stationRepository = myDataSource.getRepository(Station);

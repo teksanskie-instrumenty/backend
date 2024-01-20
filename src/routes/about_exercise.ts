@@ -12,7 +12,7 @@ import {Exercise} from "../entities/Exercise";
 
 const router = express.Router();
 
-router.get("/exercises", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/exercises", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const exerciseRepository = myDataSource.getRepository(Exercise);
         const exercises = await exerciseRepository.find();
@@ -24,7 +24,7 @@ router.get("/exercises", verifySession(), async(req: SessionRequest, res: expres
     }
 });
 
-router.post("/exercise", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.post("/api/exercise", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const { station_id, name, pace } = req.body;
         const exerciseRepository = myDataSource.getRepository(Exercise);

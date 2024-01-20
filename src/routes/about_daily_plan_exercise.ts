@@ -12,7 +12,7 @@ import {Exercise} from "../entities/Exercise";
 
 const router = express.Router();
 
-router.get("/daily-plan/exercise/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/daily-plan/exercise/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanExerciseId = parseInt(req.params.id);
         const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
@@ -29,7 +29,7 @@ router.get("/daily-plan/exercise/:id", verifySession(), async(req: SessionReques
     }
 });
 
-router.post("/daily-plan/exercise", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.post("/api/daily-plan/exercise", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const { exercise_id, order, repetitions, sets, interval } = req.body;
 
@@ -58,7 +58,7 @@ router.post("/daily-plan/exercise", verifySession(), async(req: SessionRequest, 
     }
 });
 
-router.patch("/daily-plan/exercise/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.patch("/api/daily-plan/exercise/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanExerciseId = parseInt(req.params.id);
         const { dailyPlanId } = req.body;

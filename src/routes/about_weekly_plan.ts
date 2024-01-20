@@ -12,7 +12,7 @@ import {DailyPlan} from "../entities/DailyPlan";
 const router = express.Router();
 
 // TODO: GET method to retrieve user's weekly plan
-router.get("/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
 
@@ -33,7 +33,7 @@ router.get("/weekly-plan", verifySession(), async(req: SessionRequest, res: expr
     }
 });
 
-router.post("/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.post("/api/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
         const weeklyPlanRepository = myDataSource.getRepository(WeeklyPlan);
@@ -48,7 +48,7 @@ router.post("/weekly-plan", verifySession(), async(req: SessionRequest, res: exp
     }
 });
 
-router.patch("/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.patch("/api/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
         const weeklyPlanRepository = myDataSource.getRepository(WeeklyPlan);

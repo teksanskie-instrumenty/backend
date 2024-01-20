@@ -11,7 +11,7 @@ import {DailyPlan} from "../entities/DailyPlan";
 
 const router = express.Router();
 
-router.get("/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanId = parseInt(req.params.id);
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
@@ -35,7 +35,7 @@ router.get("/daily-plan/:id", verifySession(), async(req: SessionRequest, res: e
     }
 });
 
-router.post("/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.post("/api/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const { name, desc, img } = req.body;
 

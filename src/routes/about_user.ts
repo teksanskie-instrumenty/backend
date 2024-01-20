@@ -10,7 +10,7 @@ import {User} from "../entities/User";
 
 const router = express.Router();
 
-router.get("/user-info", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.get("/api/user-info", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
         const userRepository = myDataSource.getRepository(User);
@@ -27,7 +27,7 @@ router.get("/user-info", verifySession(), async(req: SessionRequest, res: expres
     }
 });
 
-router.patch("/user-info", verifySession(), async(req: SessionRequest, res: express.Response) => {
+router.patch("/api/user-info", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
         const userRepository = myDataSource.getRepository(User);
@@ -47,7 +47,7 @@ router.patch("/user-info", verifySession(), async(req: SessionRequest, res: expr
     }
 });
 
-router.post("/signout", verifySession(), async (req: SessionRequest, res: express.Response) => {
+router.post("/api/signout", verifySession(), async (req: SessionRequest, res: express.Response) => {
     await req.session!.revokeSession();
 
     return res.status(200).json({ message: 'Logged out successfully' });
