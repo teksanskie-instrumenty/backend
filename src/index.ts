@@ -18,6 +18,7 @@ import {dailyPlanRouter} from "./routes/about_daily_plan";
 import {exerciseRouter} from "./routes/about_exercise";
 import {stationRouter} from "./routes/about_station";
 import {dailyPlanExerciseRouter} from "./routes/about_daily_plan_exercise";
+import mqtt from 'mqtt';
 
 dotenv.config({path: '.env'});
 
@@ -126,4 +127,38 @@ myDataSource
     })
     .catch((err) => {
         console.error("Error during Data Source initialization:", err)
+    });
+
+const host = 'localhost'
+const port = '1883'
+const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+
+const connectUrl = `mqtt://${host}:${port}`
+
+const client = mqtt.connect(connectUrl, {
+    clientId,
+    clean: true,
+    connectTimeout: 4000,
+    username: 'username',
+    password: 'G516cD8#rSb£',
+    reconnectPeriod: 1000,
+})
+
+const topic = '/nodejs/mqtt'
+
+client.on('connect', () => {
+    console.log('Connected')
+
+    client.subscribe([topic], () => {
+        console.log(`Subscribe to topic '${topic}'`)
+        client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
+            if (error) {
+                console.error(error)
+            }
+        })
     })
+})
+
+client.on('message', (topic, payload) => {
+    console.log('Received Message:', topic, payload.toString())
+})
