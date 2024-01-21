@@ -129,7 +129,7 @@ myDataSource
         console.error("Error during Data Source initialization:", err)
     });
 
-const host = 'localhost';
+const host = 'iot-proj.swisz.cz';
 const port = '1883';
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
 
@@ -172,10 +172,10 @@ client.on('error', (error) => {
     console.error('MQTT client error:', error);
 });
 
-setInterval(() => {
+/*setInterval(() => {
     client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
         if (error) {
             console.error('Error publishing message:', error);
         }
     });
-}, 5000);
+}, 5000);*/
