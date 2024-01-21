@@ -20,6 +20,11 @@ import {stationRouter} from "./routes/about_station";
 import {dailyPlanExerciseRouter} from "./routes/about_daily_plan_exercise";
 import mqtt from 'mqtt';
 import {finishedExercisesRouter} from "./routes/about_finished_exercise";
+import {User} from "./entities/User";
+import {DailyPlanExercise} from "./entities/DailyPlanExercise";
+import {FinishedExercise} from "./entities/FinishedExercise";
+import {DailyPlan} from "./entities/DailyPlan";
+import {WeeklyPlan} from "./entities/WeeklyPlan";
 
 dotenv.config({path: '.env'});
 
@@ -146,38 +151,86 @@ const client = mqtt.connect(connectUrl, {
     reconnectPeriod: 1000,
 });
 
-const topic = '/nodejs/mqtt';
+const topics = ['get/task', 'confirm/task'];
 
 client.on('connect', () => {
     console.log('Connected');
 
-    client.subscribe([topic], (err) => {
+    client.subscribe(topics, (err) => {
         if (err) {
             console.error('Error subscribing to topic:', err);
         } else {
-            console.log(`Subscribed to topic '${topic}'`);
-        }
-    });
-
-    client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
-        if (error) {
-            console.error('Error publishing message:', error);
+            console.log(`Subscribed to topic '${topics}'`);
         }
     });
 });
 
-client.on('message', (topic, payload) => {
+client.on('message', async (topic, payload) => {
+    if (topic === 'get/task') {
+        const cardId = payload.toString(); // Extract the card ID from the payload
+
+        const userCardRepository = myDataSource.getRepository(User);
+        const userCard = await userCardRepository.findOne({where: {card_id: cardId}});
+
+        if (userCard) {
+            const userId = userCard.id;
+
+            const weeklyPlanRepository = myDataSource.getRepository(WeeklyPlan);
+            const userWeeklyPlan = await weeklyPlanRepository.findOne({
+                where: { user: { id: userId } },
+                relations: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+            });
+
+            if (!userWeeklyPlan) {
+                // publish: Weekly plan not found
+            }
+            const date = new Date();
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayToday =  days[date.getDay()]  as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+            const dailyPlanId = userWeeklyPlan![dayToday].id;
+            const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
+            const dailyPlan = await dailyPlanRepository.findOne({ where : { id: dailyPlanId }});
+
+            if (!dailyPlan) {
+                // publish: Daily plan not found
+            }
+
+            const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
+            const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
+            const dailyPlanExercises = await dailyPlanExerciseRepository
+                .createQueryBuilder("dailyPlanExercise")
+                .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
+                .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan?.id })
+                .getMany();
+
+            const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
+                const finishedExercise = await finishedExerciseRepository.findOne({ where : { id: dailyPlanExercise.id }});
+                return {
+                    ...dailyPlanExercise,
+                    when_finished: finishedExercise ? finishedExercise.when_finished : null,
+                    is_finished: !!finishedExercise
+                };
+            }));
+
+            const message = { dailyPlan, dailyPlanExercises: dailyPlanExercisesWithFinished } ? JSON.stringify({ dailyPlan, dailyPlanExercises: dailyPlanExercisesWithFinished }) : 'No daily plan found';
+            client.publish('get/task/resp', message, {qos: 0, retain: false}, (error) => {
+                if (error) {
+                    console.error('Error publishing message:', error);
+                }
+            });
+        }
+        else {
+            client.publish('get/task/resp', 'Card not assigned to user', {qos: 0, retain: false}, (error) => {
+                if (error) {
+                    console.error('Error publishing message:', error);
+                }
+            });
+        }
+    }
     console.log('Received Message:', topic, payload.toString());
 });
 
 client.on('error', (error) => {
     console.error('MQTT client error:', error);
 });
-
-/*setInterval(() => {
-    client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
-        if (error) {
-            console.error('Error publishing message:', error);
-        }
-    });
-}, 5000);*/
