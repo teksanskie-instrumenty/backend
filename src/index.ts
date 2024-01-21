@@ -129,36 +129,53 @@ myDataSource
         console.error("Error during Data Source initialization:", err)
     });
 
-const host = 'localhost'
-const port = '1883'
-const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+const host = 'localhost';
+const port = '1883';
+const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
 
-const connectUrl = `mqtt://${host}:${port}`
+const connectUrl = `mqtt://${host}:${port}`;
 
 const client = mqtt.connect(connectUrl, {
     clientId,
     clean: true,
     connectTimeout: 4000,
-    username: 'username',
+    username: 'iot',
     password: 'G516cD8#rSb£',
     reconnectPeriod: 1000,
-})
+});
 
-const topic = '/nodejs/mqtt'
+const topic = '/nodejs/mqtt';
 
 client.on('connect', () => {
-    console.log('Connected')
+    console.log('Connected');
 
-    client.subscribe([topic], () => {
-        console.log(`Subscribe to topic '${topic}'`)
-        client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
-            if (error) {
-                console.error(error)
-            }
-        })
-    })
-})
+    client.subscribe([topic], (err) => {
+        if (err) {
+            console.error('Error subscribing to topic:', err);
+        } else {
+            console.log(`Subscribed to topic '${topic}'`);
+        }
+    });
+
+    client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
+        if (error) {
+            console.error('Error publishing message:', error);
+        }
+    });
+});
 
 client.on('message', (topic, payload) => {
-    console.log('Received Message:', topic, payload.toString())
-})
+    console.log('Received Message:', topic, payload.toString());
+});
+
+client.on('error', (error) => {
+    console.error('MQTT client error:', error);
+});
+
+setInterval(() => {
+    client.publish(topic, 'nodejs mqtt test', { qos: 0, retain: false }, (error) => {
+        if (error) {
+            console.error('Error publishing message:', error);
+        }
+    });
+}, 5000);
