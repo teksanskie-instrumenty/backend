@@ -8,6 +8,7 @@ import { SessionRequest } from "supertokens-node/framework/express";
 import {EmailPassword_Users} from "../entities/EmailPassword_Users";
 import { DailyPlanExercise } from "../entities/DailyPlanExercise";
 import {DailyPlan} from "../entities/DailyPlan";
+import {FinishedExercise} from "../entities/FinishedExercise";
 
 const router = express.Router();
 
@@ -23,7 +24,6 @@ router.get("/api/daily-plan", verifySession(), async(req: SessionRequest, res: e
     }
 });
 
-// TODO: add information about finished exercises
 router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanId = parseInt(req.params.id);
@@ -35,13 +35,23 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
         }
 
         const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
+        const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
         const dailyPlanExercises = await dailyPlanExerciseRepository
             .createQueryBuilder("dailyPlanExercise")
             .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
             .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan.id })
             .getMany();
 
-        return res.status(200).json({ dailyPlan, dailyPlanExercises });
+        const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
+            const finishedExercise = await finishedExerciseRepository.findOne({ where : { id: dailyPlanExercise.id }});
+            return {
+                ...dailyPlanExercise,
+                when_finished: finishedExercise ? finishedExercise.when_finished : null,
+                is_finished: !!finishedExercise
+            };
+        }));
+
+        return res.status(200).json({ dailyPlan, dailyPlanExercises: dailyPlanExercisesWithFinished });
     } catch (error) {
         console.error('Error retrieving daily plan and its exercises:', error);
         return res.status(500).json({error: 'Failed to retrieve daily plan and its exercises'});
