@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/api/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
-        const dailyPlans = await dailyPlanRepository.find();
+        const dailyPlans = await dailyPlanRepository.find({ order: { id: 'ASC' } });
 
         return res.status(200).json(dailyPlans);
     } catch (error) {
