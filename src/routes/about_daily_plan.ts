@@ -60,13 +60,13 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
 
 router.post("/api/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
-        const { name, desc, img } = req.body;
+        const { name, description, image } = req.body;
 
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
         const newDailyPlan = new DailyPlan();
         newDailyPlan.name = name;
-        newDailyPlan.description = desc;
-        newDailyPlan.image = img;
+        newDailyPlan.description = description;
+        newDailyPlan.image = image;
         const savedDailyPlan = await dailyPlanRepository.save(newDailyPlan);
 
         return res.status(201).json(savedDailyPlan);
