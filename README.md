@@ -111,34 +111,30 @@ allow_anonymous false
 
 `GET /api/daily-plan/:id`
 
-// TODO: add exercises to the example response
 #### response
 ```json
 {
-  "dailyPlan": {
-    "id": 2,
-    "name": "Zdrowe plecy",
-    "description": "Ulecz ból pleców",
-    "image": "./plecy.png"
-  },
-  "dailyPlanExercises": [
-    {
-      "id": 3,
-      "order": 1,
-      "sets": 3,
-      "repetitions": 10,
-      "interval": 60,
-      "exercise": null
+    "dailyPlan": {
+        "id": 2,
+        "name": "Zdrowe plecy",
+        "description": "Ulecz ból pleców",
+        "image": "./plecy.png"
     },
-    {
-      "id": 2,
-      "order": 1,
-      "sets": 3,
-      "repetitions": 10,
-      "interval": 60,
-      "exercise": null
-    }
-  ]
+    "dailyPlanExercises": [
+        {
+            "id": 1,
+            "order": 1,
+            "sets": 20,
+            "repetitions": 10,
+            "interval": 5,
+            "exercise": {
+                "id": 1,
+                "station_id": 1,
+                "name": "plecy 1",
+                "pace": "3040"
+            }
+        }
+    ]
 }
 ```
 
