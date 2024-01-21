@@ -11,6 +11,19 @@ import {DailyPlan} from "../entities/DailyPlan";
 
 const router = express.Router();
 
+router.get("/api/daily-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
+    try {
+        const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
+        const dailyPlans = await dailyPlanRepository.find();
+
+        return res.status(200).json(dailyPlans);
+    } catch (error) {
+        console.error('Error retrieving daily plans:', error);
+        return res.status(500).json({error: 'Failed to retrieve daily plans'});
+    }
+});
+
+// TODO: add information about finished exercises
 router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanId = parseInt(req.params.id);

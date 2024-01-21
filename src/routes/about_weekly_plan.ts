@@ -11,7 +11,6 @@ import {DailyPlan} from "../entities/DailyPlan";
 
 const router = express.Router();
 
-// TODO: GET method to retrieve user's weekly plan
 router.get("/api/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
@@ -48,6 +47,7 @@ router.post("/api/weekly-plan", verifySession(), async(req: SessionRequest, res:
     }
 });
 
+// TODO: make sure that it works
 router.patch("/api/weekly-plan", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const userId = req.session!.getUserId();
