@@ -111,7 +111,8 @@ allow_anonymous false
 
 `GET /api/daily-plan/:id`
 
-// TODO: add exercises to #### response
+// TODO: add exercises to the example response
+#### response
 ```json
 {
   "dailyPlan": {
@@ -120,7 +121,24 @@ allow_anonymous false
     "description": "Ulecz ból pleców",
     "image": "./plecy.png"
   },
-  "dailyPlanExercises": []
+  "dailyPlanExercises": [
+    {
+      "id": 3,
+      "order": 1,
+      "sets": 3,
+      "repetitions": 10,
+      "interval": 60,
+      "exercise": null
+    },
+    {
+      "id": 2,
+      "order": 1,
+      "sets": 3,
+      "repetitions": 10,
+      "interval": 60,
+      "exercise": null
+    }
+  ]
 }
 ```
 
@@ -154,28 +172,28 @@ allow_anonymous false
 #### payload
 ```json
 {
-  "exercise_id": 1,
   "order": 1,
   "repetitions": 10,
-  "sets": 20,
-  "interval": 5
+  "sets": 3,
+  "interval": 60,
+  "daily_plan_id": 2
 }
 ```
 
 #### response
 ```json
 {
-  "exercise": {
-    "id": 1,
-    "station_id": 1,
-    "name": "plecy 1",
-    "pace": "3040"
-  },
   "order": 1,
   "repetitions": 10,
-  "sets": 20,
-  "interval": 5,
-  "id": 1
+  "sets": 3,
+  "interval": 60,
+  "dailyPlan": {
+    "id": 2,
+    "name": "Zdrowe plecy",
+    "description": "Ulecz ból pleców",
+    "image": "./plecy.png"
+  },
+  "id": 3
 }
 ```
 
@@ -228,6 +246,43 @@ allow_anonymous false
 ```
 
 ## Finished Exercise Management
+
+`GET /api/finished-exercises`
+
+```json
+[
+  {
+    "id": 1,
+    "user_id": "350f4342-c94a-4292-8306-3b8637c2c7a2",
+    "when_finished": "2022-03-01T10:00:00.000Z"
+  }
+]
+```
+
+`POST /api/finished-exercise`
+#### payload
+```json
+{
+  "exercise_id": 1,
+  "when_finished": "2022-03-01T10:00:00Z"
+}
+```
+
+#### response
+```json
+{
+    "user_id": "350f4342-c94a-4292-8306-3b8637c2c7a2",
+    "dailyPlanExercise": {
+        "id": 1,
+        "order": 1,
+        "sets": 20,
+        "repetitions": 10,
+        "interval": 5
+    },
+    "when_finished": "2022-03-01T10:00:00.000Z",
+    "id": 1
+}
+```
 
 ## Weekly Plan Management
 

@@ -19,6 +19,7 @@ import {exerciseRouter} from "./routes/about_exercise";
 import {stationRouter} from "./routes/about_station";
 import {dailyPlanExerciseRouter} from "./routes/about_daily_plan_exercise";
 import mqtt from 'mqtt';
+import {finishedExercisesRouter} from "./routes/about_finished_exercise";
 
 dotenv.config({path: '.env'});
 
@@ -119,6 +120,7 @@ myDataSource
         app.use(exerciseRouter);
         app.use(stationRouter);
         app.use(dailyPlanExerciseRouter);
+        app.use(finishedExercisesRouter);
         app.use(errorHandler());
         app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             res.status(500).send("Internal error: " + err.message);

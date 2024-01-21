@@ -31,23 +31,22 @@ router.get("/api/daily-plan/exercise/:id", verifySession(), async(req: SessionRe
 
 router.post("/api/daily-plan/exercise", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
-        const { exercise_id, order, repetitions, sets, interval } = req.body;
+        const { order, repetitions, sets, interval, daily_plan_id } = req.body;
 
-        const exerciseRepository = myDataSource.getRepository(Exercise);
-        const exercise = await exerciseRepository.findOne({ where : { id: exercise_id }});
+        const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
+        const dailyPlan = await dailyPlanRepository.findOne({ where : { id: daily_plan_id }});
 
-        if (!exercise) {
-            return res.status(404).json({ error: 'Exercise not found' });
+        if (!dailyPlan) {
+            return res.status(404).json({ error: 'Daily plan not found' });
         }
 
         const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
         const newDailyPlanExercise = new DailyPlanExercise();
-
-        newDailyPlanExercise.exercise = exercise;
         newDailyPlanExercise.order = order;
         newDailyPlanExercise.repetitions = repetitions;
         newDailyPlanExercise.sets = sets;
         newDailyPlanExercise.interval = interval;
+        newDailyPlanExercise.dailyPlan = dailyPlan;
 
         const savedDailyPlanExercise = await dailyPlanExerciseRepository.save(newDailyPlanExercise);
 
@@ -61,7 +60,7 @@ router.post("/api/daily-plan/exercise", verifySession(), async(req: SessionReque
 router.patch("/api/daily-plan/exercise/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
         const dailyPlanExerciseId = parseInt(req.params.id);
-        const { dailyPlanId } = req.body;
+        const { daily_plan_id } = req.body;
 
         const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
         const dailyPlanExercise = await dailyPlanExerciseRepository.findOne({ where : { id: dailyPlanExerciseId }});
@@ -71,7 +70,7 @@ router.patch("/api/daily-plan/exercise/:id", verifySession(), async(req: Session
         }
 
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
-        const dailyPlan = await dailyPlanRepository.findOne({ where : { id: dailyPlanId }});
+        const dailyPlan = await dailyPlanRepository.findOne({ where : { id: daily_plan_id }});
 
         if (!dailyPlan) {
             return res.status(404).json({ error: 'Daily plan not found' });

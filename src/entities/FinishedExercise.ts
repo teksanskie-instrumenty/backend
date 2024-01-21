@@ -16,7 +16,7 @@ export class FinishedExercise extends BaseEntity {
     dailyPlanExercise: DailyPlanExercise;
 
     @Column()
-    user_id: number;
+    user_id: string;
 
     @Column({ type: 'timestamp' })
     when_finished: Date;
