@@ -362,3 +362,18 @@ allow_anonymous false
   "id": 1
 }
 ```
+
+# MQTT
+
+`check/user` - check if user is registered
+
+`mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t check/user/resp -u "iot" -P "G516cD8#rSb£"`
+
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t check/user -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
+
+
+`get/task` - get task from the server
+
+`mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t get/task/resp -u "iot" -P "G516cD8#rSb£"`
+
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
