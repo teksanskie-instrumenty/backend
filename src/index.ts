@@ -258,8 +258,48 @@ client.on('message', async (topic, payload) => {
         }
     }
     else if (topic === 'confirm/task') {
-        // TODO: PATCH finished exercise
-        // pytanie, czy dostajemy ID ćwiczenia, czy tylko ID karty, a bierzemy pierwsze niezrobione ćwiczenie
+        const [cardId, exerciseId, whenFinished] = payload.toString().split(' ');
+
+        const userCardRepository = myDataSource.getRepository(User);
+        const userCard = await userCardRepository.findOne({where: {card_id: cardId}});
+
+        if (userCard && exerciseId && whenFinished) {
+            const userId = userCard.id;
+
+            const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
+            const dailyPlanExercise = await dailyPlanExerciseRepository.findOne({ where : { id: parseInt(exerciseId) }});
+
+            if (!dailyPlanExercise) {
+                client.publish('confirm/task/resp', 'Daily plan exercise not found', {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+            }
+
+            if (dailyPlanExercise) {
+                const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
+                const newFinishedExercise = new FinishedExercise();
+                newFinishedExercise.user_id = userId;
+                newFinishedExercise.dailyPlanExercise = dailyPlanExercise;
+                newFinishedExercise.when_finished = new Date(whenFinished);
+                const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
+
+                const message = JSON.stringify(savedFinishedExercise);
+                client.publish('confirm/task/resp', message, {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+            }
+        }
+        else {
+            client.publish('confirm/task/resp', 'Card not assigned to user', {qos: 0, retain: false}, (error) => {
+                if (error) {
+                    console.error('Error publishing message:', error);
+                }
+            });
+        }
     }
     console.log('Received Message:', topic, payload.toString());
 });

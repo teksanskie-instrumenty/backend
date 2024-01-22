@@ -377,3 +377,10 @@ allow_anonymous false
 `mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t get/task/resp -u "iot" -P "G516cD8#rSb£"`
 
 `mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
+
+
+`confirm/task` - confirm finished task
+
+`mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t confirm/task/resp -u "iot" -P "G516cD8#rSb£"`
+
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t confirm/task -m "AN3W4324N43TSA 1 2022-03-01T10:00:00Z" -u "iot" -P "G516cD8#rSb£"`
