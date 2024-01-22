@@ -151,22 +151,51 @@ const client = mqtt.connect(connectUrl, {
     reconnectPeriod: 1000,
 });
 
-const topics = ['get/task', 'confirm/task'];
+const topics = ['check/user', 'get/task', 'confirm/task'];
 
 client.on('connect', () => {
     console.log('Connected');
 
-    client.subscribe(topics, (err) => {
+    client.unsubscribe(topics, (err) => {
         if (err) {
-            console.error('Error subscribing to topic:', err);
+            console.error('Error unsubscribing to topic:', err);
         } else {
-            console.log(`Subscribed to topic '${topics}'`);
+            client.subscribe(topics, (err) => {
+                if (err) {
+                    console.error('Error subscribing to topic:', err);
+                } else {
+                    console.log(`Subscribed to topic '${topics}'`);
+                }
+            });
         }
     });
 });
 
 client.on('message', async (topic, payload) => {
-    if (topic === 'get/task') {
+    if (topic === 'check/user') {
+        const cardId = payload.toString(); // Extract the card ID from the payload
+
+        const userCardRepository = myDataSource.getRepository(User);
+        const userCard = await userCardRepository.findOne({where: {card_id: cardId}});
+
+        if (userCard) {
+            const userId = userCard.id;
+            const message = { userId } ? JSON.stringify({ userId }) : 'No user found';
+            client.publish('check/user/resp', message, {qos: 0, retain: false}, (error) => {
+                if (error) {
+                    console.error('Error publishing message:', error);
+                }
+            });
+        }
+        else {
+            client.publish('check/user/resp', 'Card not assigned to user', {qos: 0, retain: false}, (error) => {
+                if (error) {
+                    console.error('Error publishing message:', error);
+                }
+            });
+        }
+    }
+    else if (topic === 'get/task') {
         const cardId = payload.toString(); // Extract the card ID from the payload
 
         const userCardRepository = myDataSource.getRepository(User);
@@ -227,6 +256,10 @@ client.on('message', async (topic, payload) => {
                 }
             });
         }
+    }
+    else if (topic === 'confirm/task') {
+        // TODO: PATCH finished exercise
+        // pytanie, czy dostajemy ID ćwiczenia, czy tylko ID karty, a bierzemy pierwsze niezrobione ćwiczenie
     }
     console.log('Received Message:', topic, payload.toString());
 });
