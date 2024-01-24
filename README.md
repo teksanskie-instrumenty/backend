@@ -378,6 +378,58 @@ allow_anonymous false
 
 `mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
 
+```json
+{
+  "dailyPlan": {
+    "id": 2,
+    "name": "Zdrowe plecy",
+    "description": "Ulecz ból pleców",
+    "image": "./plecy.png"
+  },
+  "dailyPlanExercises": [
+    {
+      "id": 1,
+      "order": 1,
+      "sets": 20,
+      "repetitions": 2,
+      "interval": 5,
+      "exercise": {
+        "id": 1,
+        "station_id": 1,
+        "name": "plecy 1",
+        "pace": "1313",
+        "station": {
+          "id": 1,
+          "name": "maszyna do robiena plecow",
+          "color": "FF0000"
+        }
+      },
+      "when_finished": "2022-03-01T10:00:00.000Z",
+      "is_finished": true
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "sets": 3,
+      "repetitions": 2,
+      "interval": 60,
+      "exercise": {
+        "id": 1,
+        "station_id": 1,
+        "name": "plecy 1",
+        "pace": "1313",
+        "station": {
+          "id": 1,
+          "name": "maszyna do robiena plecow",
+          "color": "FF0000"
+        }
+      },
+      "when_finished": "2022-03-01T10:00:00.000Z",
+      "is_finished": true
+    }
+  ]
+}
+```
 
 `confirm/task` - confirm finished task
 

@@ -230,13 +230,23 @@ client.on('message', async (topic, payload) => {
             const dailyPlanExercises = await dailyPlanExerciseRepository
                 .createQueryBuilder("dailyPlanExercise")
                 .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
+                .leftJoinAndSelect("exercise.station", "station")
                 .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan?.id })
+                .orderBy("dailyPlanExercise.id", "ASC")
                 .getMany();
 
             const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
                 const finishedExercise = await finishedExerciseRepository.findOne({ where : { id: dailyPlanExercise.id }});
                 return {
                     ...dailyPlanExercise,
+                    exercise: {
+                        ...dailyPlanExercise.exercise,
+                        station: {
+                            id: dailyPlanExercise.exercise.station.id,
+                            name: dailyPlanExercise.exercise.station.name,
+                            color: dailyPlanExercise.exercise.station.color,
+                        },
+                    },
                     when_finished: finishedExercise ? finishedExercise.when_finished : null,
                     is_finished: !!finishedExercise
                 };
