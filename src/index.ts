@@ -28,23 +28,23 @@ import {WeeklyPlan} from "./entities/WeeklyPlan";
 
 dotenv.config({path: '.env'});
 
-const PC_IP = process.env.PC_IP;
+const HOST_IP = process.env.PC_IP;
 const API_PORT = process.env.API_PORT;
 const APP_PORT = process.env.APP_PORT;
 const API_KEY = process.env.API_KEY || '';
 
-const apiDomain = `http://${PC_IP}:${API_PORT}`;
+const apiDomain = `http://${HOST_IP}:${API_PORT}`;
 
 supertokens.init({
     framework: 'express',
     supertokens: {
-        connectionURI: `http://${PC_IP}:3567`,
+        connectionURI: `http://${HOST_IP}:3567`,
         apiKey: API_KEY,
     },
     appInfo: {
         appName: 'IntelliGYM',
         apiDomain,
-        websiteDomain: `http://${PC_IP}:${APP_PORT}`,
+        websiteDomain: `http://${HOST_IP}:${APP_PORT}`,
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
     },
@@ -106,7 +106,7 @@ myDataSource
         app.use(express.json());
         app.use(
             cors({
-                origin: `http://${PC_IP}:${APP_PORT}`,
+                origin: `http://${HOST_IP}:${APP_PORT}`,
                 allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
                 methods: ["GET", "PUT", "POST", "DELETE"],
                 credentials: true,
@@ -136,18 +136,18 @@ myDataSource
         console.error("Error during Data Source initialization:", err)
     });
 
-const host = 'iot-proj.swisz.cz';
-const port = '1883';
+const HOST = process.env.DOMAIN;
+const PORT = process.env.MQTT_PORT;
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
 
-const connectUrl = `mqtt://${host}:${port}`;
+const connectUrl = `mqtt://${HOST}:${PORT}`;
 
 const client = mqtt.connect(connectUrl, {
     clientId,
     clean: true,
     connectTimeout: 4000,
-    username: 'iot',
-    password: 'G516cD8#rSb£',
+    username: process.env.MQTT_USERNAME,
+    password: process.env.MQTT_PASSWORD,
     reconnectPeriod: 1000,
 });
 
