@@ -314,22 +314,6 @@ client.on('message', async (topic, payload) => {
                     }
                 });
             }
-
-            /*if (dailyPlanExercise) {
-                const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
-                const newFinishedExercise = new FinishedExercise();
-                newFinishedExercise.user_id = userId;
-                newFinishedExercise.dailyPlanExercise = dailyPlanExercise;
-                newFinishedExercise.when_finished = new Date(whenFinished);
-                const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
-
-                const message = JSON.stringify(savedFinishedExercise);
-                client.publish('confirm/task/resp', message, {qos: 0, retain: false}, (error) => {
-                    if (error) {
-                        console.error('Error publishing message:', error);
-                    }
-                });
-            }*/
         }
         else {
             client.publish('confirm/task/resp', 'Card not assigned to user', {qos: 0, retain: false}, (error) => {

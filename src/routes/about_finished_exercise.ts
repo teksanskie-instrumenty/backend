@@ -16,7 +16,10 @@ router.get("/api/finished-exercises", verifySession(), async(req: SessionRequest
         const userId = req.session!.getUserId();
 
         const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
-        const finishedExercises = await finishedExerciseRepository.find({ where : { user_id: userId }});
+        const finishedExercises = await finishedExerciseRepository.find({
+            where : { user_id: userId },
+            relations: ["exercise"] // Include the related Exercise entity in the result
+        });
 
         return res.status(200).json(finishedExercises);
     } catch (error) {
@@ -40,7 +43,7 @@ router.post("/api/finished-exercise", verifySession(), async(req: SessionRequest
         const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
         const newFinishedExercise = new FinishedExercise();
         newFinishedExercise.user_id = userId;
-        newFinishedExercise.exercise = exercise;
+        newFinishedExercise.exercise = { id: exercise.id } as Exercise; // Set the relation using the ID of the related entity
         newFinishedExercise.when_finished = new Date(when_finished);
         const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
 
