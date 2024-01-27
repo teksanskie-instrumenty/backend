@@ -26,9 +26,9 @@ router.get("/api/daily-plan", verifySession(), async(req: SessionRequest, res: e
 
 router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
-        const dailyPlanId = parseInt(req.params.id);
+        const daily_plan_id = parseInt(req.params.id);
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
-        const dailyPlan = await dailyPlanRepository.findOne({ where : { id: dailyPlanId }});
+        const dailyPlan = await dailyPlanRepository.findOne({ where : { id: daily_plan_id }});
 
         if (!dailyPlan) {
             return res.status(404).json({ error: 'Daily plan not found' });
@@ -39,7 +39,7 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
         const dailyPlanExercises = await dailyPlanExerciseRepository
             .createQueryBuilder("dailyPlanExercise")
             .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
-            .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan.id })
+            .where("dailyPlanExercise.daily_plan_id = :daily_plan_id", { daily_plan_id: dailyPlan.id })
             .getMany();
 
         const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {

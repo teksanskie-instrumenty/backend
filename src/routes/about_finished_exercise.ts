@@ -7,6 +7,7 @@ import Session from "supertokens-node/recipe/session";
 import { SessionRequest } from "supertokens-node/framework/express";
 import {FinishedExercise} from "../entities/FinishedExercise";
 import {DailyPlanExercise} from "../entities/DailyPlanExercise";
+import {Exercise} from "../entities/Exercise";
 
 const router = express.Router();
 
@@ -29,17 +30,17 @@ router.post("/api/finished-exercise", verifySession(), async(req: SessionRequest
         const userId = req.session!.getUserId();
         const { exercise_id, when_finished } = req.body;
 
-        const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
-        const dailyPlanExercise = await dailyPlanExerciseRepository.findOne({ where : { id: exercise_id }});
+        const exerciseRepository = myDataSource.getRepository(Exercise);
+        const exercise = await exerciseRepository.findOne({ where : { id: exercise_id }});
 
-        if (!dailyPlanExercise) {
-            return res.status(404).json({ error: 'Daily plan exercise not found' });
+        if (!exercise) {
+            return res.status(404).json({ error: 'Exercise not found' });
         }
 
         const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
         const newFinishedExercise = new FinishedExercise();
         newFinishedExercise.user_id = userId;
-        newFinishedExercise.dailyPlanExercise = dailyPlanExercise;
+        newFinishedExercise.exercise = exercise;
         newFinishedExercise.when_finished = new Date(when_finished);
         const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
 

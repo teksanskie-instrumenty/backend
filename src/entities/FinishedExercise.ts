@@ -3,17 +3,19 @@ import {
     BaseEntity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne
+    ManyToOne, JoinColumn, OneToOne
 } from "typeorm";
 import { DailyPlanExercise } from "./DailyPlanExercise";
+import {Exercise} from "./Exercise";
 
 @Entity('finished_exercise')
 export class FinishedExercise extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => DailyPlanExercise)
-    dailyPlanExercise: DailyPlanExercise;
+    @OneToOne(() => Exercise, exercise => exercise.finishedExercise)
+    @JoinColumn({ name: 'exercise_id' })
+    exercise: Exercise;
 
     @Column()
     user_id: string;

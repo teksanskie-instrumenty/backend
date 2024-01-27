@@ -3,7 +3,7 @@ import {
     BaseEntity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne
+    ManyToOne, JoinColumn
 } from "typeorm";
 import { DailyPlan } from "./DailyPlan";
 import { Exercise } from "./Exercise";
@@ -14,9 +14,11 @@ export class DailyPlanExercise extends BaseEntity {
     id: number;
 
     @ManyToOne(() => DailyPlan, dailyPlan => dailyPlan.exercises, { nullable: true })
+    @JoinColumn({ name: 'daily_plan_id' })
     dailyPlan?: DailyPlan;
 
     @ManyToOne(() => Exercise)
+    @JoinColumn({ name: 'exercise_id' })
     exercise: Exercise;
 
     @Column()

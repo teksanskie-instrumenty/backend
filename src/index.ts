@@ -25,6 +25,7 @@ import {DailyPlanExercise} from "./entities/DailyPlanExercise";
 import {FinishedExercise} from "./entities/FinishedExercise";
 import {DailyPlan} from "./entities/DailyPlan";
 import {WeeklyPlan} from "./entities/WeeklyPlan";
+import {Exercise} from "./entities/Exercise";
 
 dotenv.config({path: '.env'});
 
@@ -217,9 +218,9 @@ client.on('message', async (topic, payload) => {
             const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
             const dayToday =  days[date.getDay()]  as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
-            const dailyPlanId = userWeeklyPlan![dayToday].id;
+            const daily_plan_id = userWeeklyPlan![dayToday].id;
             const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
-            const dailyPlan = await dailyPlanRepository.findOne({ where : { id: dailyPlanId }});
+            const dailyPlan = await dailyPlanRepository.findOne({ where : { id: daily_plan_id }});
 
             if (!dailyPlan) {
                 // publish: Daily plan not found
@@ -228,15 +229,15 @@ client.on('message', async (topic, payload) => {
             const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
             const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
             const dailyPlanExercises = await dailyPlanExerciseRepository
-                .createQueryBuilder("dailyPlanExercise")
-                .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
+                .createQueryBuilder("daily_plan_exercise")
+                .leftJoinAndSelect("daily_plan_exercise.exercise", "exercise")
                 .leftJoinAndSelect("exercise.station", "station")
-                .where("dailyPlanExercise.dailyPlanId = :dailyPlanId", { dailyPlanId: dailyPlan?.id })
-                .orderBy("dailyPlanExercise.id", "ASC")
+                .where("daily_plan_exercise.daily_plan_id = :daily_plan_id", { daily_plan_id: dailyPlan?.id })
+                .orderBy("daily_plan_exercise.id", "ASC")
                 .getMany();
 
             const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
-                const finishedExercise = await finishedExerciseRepository.findOne({ where : { id: dailyPlanExercise.id }});
+                const finishedExercise = await finishedExerciseRepository.findOne({ where : { exercise: { id: dailyPlanExercise.exercise.id } }});
                 return {
                     ...dailyPlanExercise,
                     exercise: {
@@ -287,7 +288,34 @@ client.on('message', async (topic, payload) => {
                 });
             }
 
-            if (dailyPlanExercise) {
+            const exerciseRepository = myDataSource.getRepository(DailyPlanExercise);
+            const exercise = await exerciseRepository.findOne({ where : { id: parseInt(exerciseId) }});
+
+            if (!exercise) {
+                client.publish('confirm/task/resp', 'Exercise not found', {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+            }
+
+            if (exercise) {
+                const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
+                const newFinishedExercise = new FinishedExercise();
+                newFinishedExercise.user_id = userId;
+                newFinishedExercise.exercise = { id: exercise.id } as Exercise; // Set the relation using the ID of the related entity
+                newFinishedExercise.when_finished = new Date(whenFinished);
+                const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
+
+                const message = JSON.stringify(savedFinishedExercise);
+                client.publish('confirm/task/resp', message, {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+            }
+
+            /*if (dailyPlanExercise) {
                 const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
                 const newFinishedExercise = new FinishedExercise();
                 newFinishedExercise.user_id = userId;
@@ -301,7 +329,7 @@ client.on('message', async (topic, payload) => {
                         console.error('Error publishing message:', error);
                     }
                 });
-            }
+            }*/
         }
         else {
             client.publish('confirm/task/resp', 'Card not assigned to user', {qos: 0, retain: false}, (error) => {

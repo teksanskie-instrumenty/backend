@@ -83,7 +83,7 @@ allow_anonymous false
 ```json
 {
   "nick": "Test1",
-  "card_id": "AN3W4324N43TSA"
+  "card_id": "330923611457"
 }
 ```
 
@@ -369,14 +369,14 @@ allow_anonymous false
 
 `mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t check/user/resp -u "iot" -P "G516cD8#rSb£"`
 
-`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t check/user -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t check/user -m "330923611457" -u "iot" -P "G516cD8#rSb£"`
 
 
 `get/task` - get task from the server
 
 `mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t get/task/resp -u "iot" -P "G516cD8#rSb£"`
 
-`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "AN3W4324N43TSA" -u "iot" -P "G516cD8#rSb£"`
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "330923611457" -u "iot" -P "G516cD8#rSb£"`
 
 ```json
 {
@@ -435,4 +435,4 @@ allow_anonymous false
 
 `mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t confirm/task/resp -u "iot" -P "G516cD8#rSb£"`
 
-`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t confirm/task -m "AN3W4324N43TSA 1 2022-03-01T10:00:00Z" -u "iot" -P "G516cD8#rSb£"`
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t confirm/task -m "330923611457 1 2022-03-01T10:00:00Z" -u "iot" -P "G516cD8#rSb£"`

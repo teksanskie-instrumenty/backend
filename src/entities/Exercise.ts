@@ -9,6 +9,7 @@ import {
     PrimaryGeneratedColumn, ManyToOne
 } from "typeorm";
 import { Station } from "./Station";
+import {FinishedExercise} from "./FinishedExercise";
 
 @Entity('exercise')
 export class Exercise extends BaseEntity {
@@ -31,4 +32,7 @@ export class Exercise extends BaseEntity {
         length: 32
     })
     pace: string;
+
+    @OneToOne(() => FinishedExercise, finishedExercise => finishedExercise.exercise)
+    finishedExercise: FinishedExercise;
 }

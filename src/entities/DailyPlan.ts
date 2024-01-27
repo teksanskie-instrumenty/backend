@@ -35,5 +35,6 @@ export class DailyPlan extends BaseEntity {
     image: string;
 
     @OneToMany(() => DailyPlanExercise, exercise => exercise.dailyPlan)
+    @JoinColumn({ name: 'daily_plan_id' })
     exercises: DailyPlanExercise[];
 }
