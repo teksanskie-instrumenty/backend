@@ -277,18 +277,7 @@ client.on('message', async (topic, payload) => {
         if (userCard && exerciseId && whenFinished) {
             const userId = userCard.id;
 
-            const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
-            const dailyPlanExercise = await dailyPlanExerciseRepository.findOne({ where : { id: parseInt(exerciseId) }});
-
-            if (!dailyPlanExercise) {
-                client.publish('confirm/task/resp', 'Daily plan exercise not found', {qos: 0, retain: false}, (error) => {
-                    if (error) {
-                        console.error('Error publishing message:', error);
-                    }
-                });
-            }
-
-            const exerciseRepository = myDataSource.getRepository(DailyPlanExercise);
+            const exerciseRepository = myDataSource.getRepository(Exercise);
             const exercise = await exerciseRepository.findOne({ where : { id: parseInt(exerciseId) }});
 
             if (!exercise) {
@@ -297,10 +286,22 @@ client.on('message', async (topic, payload) => {
                         console.error('Error publishing message:', error);
                     }
                 });
+                return;
             }
 
-            if (exercise) {
-                const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
+            const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
+            const existingFinishedExercise = await finishedExerciseRepository.findOne({ where : { user_id: userId, exercise: { id: exercise.id } }});
+
+            if (existingFinishedExercise) {
+                client.publish('confirm/task/resp', 'Exercise already finished', {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+                return;
+            }
+
+            try {
                 const newFinishedExercise = new FinishedExercise();
                 newFinishedExercise.user_id = userId;
                 newFinishedExercise.exercise = { id: exercise.id } as Exercise; // Set the relation using the ID of the related entity
@@ -309,6 +310,13 @@ client.on('message', async (topic, payload) => {
 
                 const message = JSON.stringify(savedFinishedExercise);
                 client.publish('confirm/task/resp', message, {qos: 0, retain: false}, (error) => {
+                    if (error) {
+                        console.error('Error publishing message:', error);
+                    }
+                });
+            } catch (error) {
+                console.error('Error confirming task:', error);
+                client.publish('confirm/task/resp', 'Failed to confirm task', {qos: 0, retain: false}, (error) => {
                     if (error) {
                         console.error('Error publishing message:', error);
                     }
