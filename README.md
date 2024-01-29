@@ -3,13 +3,13 @@ For Windows deployment it's recommended to download Docker Desktop
 
 #### Step 1:
 
-`docker-compose -f docker-compose.yml up -d`
+`sudo docker-compose -f docker-compose.yml up -d`
 
 #### Step 2:
 
-`docker build -t rest_api .`
+`sudo docker build -t rest_api .`
 
-`docker run -p 3001:3001 --name rest_api -d rest_api`
+`sudo docker run -p 3001:3001 --name rest_api -d rest_api`
 
 #### in order to check mosquitto logs:
 
