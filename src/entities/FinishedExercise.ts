@@ -22,6 +22,6 @@ export class FinishedExercise extends BaseEntity {
     @Column()
     user_id: string;
 
-    @Column({ type: 'timestamp' })
-    when_finished: Date;
+    @Column({ type: 'simple-array' })
+    when_finished: Date[];
 }

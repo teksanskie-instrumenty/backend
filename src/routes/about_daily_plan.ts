@@ -26,6 +26,7 @@ router.get("/api/daily-plan", verifySession(), async(req: SessionRequest, res: e
 
 router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, res: express.Response) => {
     try {
+        // const date = new Date();
         const daily_plan_id = parseInt(req.params.id);
         const dailyPlanRepository = myDataSource.getRepository(DailyPlan);
         const dailyPlan = await dailyPlanRepository.findOne({ where : { id: daily_plan_id }});
@@ -46,6 +47,20 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
 
         const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
             const finishedExercise = await finishedExerciseRepository.findOne({ where : { exercise: { id: dailyPlanExercise.exercise.id } }});
+
+            let is_finished;
+            let when_finished_formatted;
+            if (finishedExercise && Array.isArray(finishedExercise.when_finished)) {
+                is_finished = finishedExercise.when_finished.map(date => String(date) !== "null");
+                // Format dates to ISO format
+                when_finished_formatted = finishedExercise.when_finished.map(date => {
+                    return (date && String(date) !== "null") ? new Date(date).toISOString() : null;
+                });
+            } else {
+                is_finished = Array(7).fill(false);
+                when_finished_formatted = Array(7).fill(null);
+            }
+
             return {
                 ...dailyPlanExercise,
                 exercise: {
@@ -56,8 +71,8 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
                         color: dailyPlanExercise.exercise.station.color,
                     },
                 },
-                when_finished: finishedExercise ? finishedExercise.when_finished : null,
-                is_finished: !!finishedExercise
+                when_finished: when_finished_formatted,
+                is_finished: is_finished
             };
         }));
 

@@ -238,6 +238,7 @@ client.on('message', async (topic, payload) => {
 
             const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
                 const finishedExercise = await finishedExerciseRepository.findOne({ where : { exercise: { id: dailyPlanExercise.exercise.id } }});
+                const date = new Date();
                 return {
                     ...dailyPlanExercise,
                     exercise: {
@@ -248,7 +249,7 @@ client.on('message', async (topic, payload) => {
                             color: dailyPlanExercise.exercise.station.color,
                         },
                     },
-                    when_finished: finishedExercise ? finishedExercise.when_finished : null,
+                    when_finished: finishedExercise ? finishedExercise.when_finished[date.getDay()] : null,
                     is_finished: !!finishedExercise
                 };
             }));
@@ -302,10 +303,12 @@ client.on('message', async (topic, payload) => {
             }
 
             try {
+                const date = new Date();
                 const newFinishedExercise = new FinishedExercise();
                 newFinishedExercise.user_id = userId;
                 newFinishedExercise.exercise = { id: exercise.id } as Exercise; // Set the relation using the ID of the related entity
-                newFinishedExercise.when_finished = new Date(whenFinished);
+                newFinishedExercise.when_finished = Array(7).fill(null);
+                newFinishedExercise.when_finished[date.getDay()] = new Date(whenFinished);
                 const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
 
                 const message = JSON.stringify(savedFinishedExercise);

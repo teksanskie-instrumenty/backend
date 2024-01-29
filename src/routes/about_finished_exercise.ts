@@ -44,7 +44,9 @@ router.post("/api/finished-exercise", verifySession(), async(req: SessionRequest
         const newFinishedExercise = new FinishedExercise();
         newFinishedExercise.user_id = userId;
         newFinishedExercise.exercise = { id: exercise.id } as Exercise; // Set the relation using the ID of the related entity
-        newFinishedExercise.when_finished = new Date(when_finished);
+        // newFinishedExercise.when_finished = new Date(when_finished);
+        const date = new Date();
+        newFinishedExercise.when_finished[date.getDay()] = new Date(when_finished);
         const savedFinishedExercise = await finishedExerciseRepository.save(newFinishedExercise);
 
         return res.status(201).json(savedFinishedExercise);
