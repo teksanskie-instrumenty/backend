@@ -3,7 +3,9 @@ import {
     BaseEntity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne, JoinColumn, OneToOne
+    ManyToOne,
+    JoinColumn,
+    OneToOne
 } from "typeorm";
 import { DailyPlanExercise } from "./DailyPlanExercise";
 import {Exercise} from "./Exercise";

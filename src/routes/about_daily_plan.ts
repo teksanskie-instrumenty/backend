@@ -37,15 +37,25 @@ router.get("/api/daily-plan/:id", verifySession(), async(req: SessionRequest, re
         const dailyPlanExerciseRepository = myDataSource.getRepository(DailyPlanExercise);
         const finishedExerciseRepository = myDataSource.getRepository(FinishedExercise);
         const dailyPlanExercises = await dailyPlanExerciseRepository
-            .createQueryBuilder("dailyPlanExercise")
-            .leftJoinAndSelect("dailyPlanExercise.exercise", "exercise")
-            .where("dailyPlanExercise.daily_plan_id = :daily_plan_id", { daily_plan_id: dailyPlan.id })
+            .createQueryBuilder("daily_plan_exercise")
+            .leftJoinAndSelect("daily_plan_exercise.exercise", "exercise")
+            .leftJoinAndSelect("exercise.station", "station")
+            .where("daily_plan_exercise.daily_plan_id = :daily_plan_id", { daily_plan_id: dailyPlan?.id })
+            .orderBy("daily_plan_exercise.id", "ASC")
             .getMany();
 
         const dailyPlanExercisesWithFinished = await Promise.all(dailyPlanExercises.map(async (dailyPlanExercise) => {
-            const finishedExercise = await finishedExerciseRepository.findOne({ where : { id: dailyPlanExercise.id }});
+            const finishedExercise = await finishedExerciseRepository.findOne({ where : { exercise: { id: dailyPlanExercise.exercise.id } }});
             return {
                 ...dailyPlanExercise,
+                exercise: {
+                    ...dailyPlanExercise.exercise,
+                    station: {
+                        id: dailyPlanExercise.exercise.station.id,
+                        name: dailyPlanExercise.exercise.station.name,
+                        color: dailyPlanExercise.exercise.station.color,
+                    },
+                },
                 when_finished: finishedExercise ? finishedExercise.when_finished : null,
                 is_finished: !!finishedExercise
             };
