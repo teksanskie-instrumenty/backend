@@ -11,7 +11,7 @@ For Windows deployment it's recommended to download Docker Desktop
 
 `sudo docker run -p 3001:3001 --name rest_api -d rest_api`
 
-#### in order to check mosquitto logs:
+#### in order to check API logs:
 
 `sudo docker logs -f rest_api`
 
@@ -114,27 +114,50 @@ allow_anonymous false
 #### response
 ```json
 {
-    "dailyPlan": {
-        "id": 2,
-        "name": "Zdrowe plecy",
-        "description": "Ulecz ból pleców",
-        "image": "./plecy.png"
-    },
-    "dailyPlanExercises": [
-        {
-            "id": 1,
-            "order": 1,
-            "sets": 20,
-            "repetitions": 10,
-            "interval": 5,
-            "exercise": {
-                "id": 1,
-                "station_id": 1,
-                "name": "plecy 1",
-                "pace": "3040"
-            }
+  "dailyPlan": {
+    "id": 2,
+    "name": "Zdrowe plecy",
+    "description": "Ulecz ból pleców",
+    "image": "./plecy.png"
+  },
+  "dailyPlanExercises": [
+    {
+      "id": 1,
+      "order": 1,
+      "sets": 20,
+      "repetitions": 2,
+      "interval": 5,
+      "exercise": {
+        "id": 1,
+        "station_id": 1,
+        "name": "plecy 1",
+        "pace": "1313",
+        "station": {
+          "id": 1,
+          "name": "ława",
+          "color": "FF0000"
         }
-    ]
+      },
+      "when_finished": [
+        null,
+        "2022-03-01T10:00:00.000Z",
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_finished": [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  ]
 }
 ```
 
@@ -375,9 +398,6 @@ allow_anonymous false
 `get/task` - get task from the server
 
 `mosquitto_sub -h iot-proj.swisz.cz -p 1883 -t get/task/resp -u "iot" -P "G516cD8#rSb£"`
-
-`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "330923611457" -u "iot" -P "G516cD8#rSb£"`
-
 ```json
 {
   "dailyPlan": {
@@ -400,36 +420,18 @@ allow_anonymous false
         "pace": "1313",
         "station": {
           "id": 1,
-          "name": "maszyna do robiena plecow",
+          "name": "ława",
           "color": "FF0000"
         }
       },
-      "when_finished": "2022-03-01T10:00:00.000Z",
-      "is_finished": true
-    },
-    {
-      "id": 2,
-      "order": 2,
-      "sets": 3,
-      "repetitions": 2,
-      "interval": 60,
-      "exercise": {
-        "id": 1,
-        "station_id": 1,
-        "name": "plecy 1",
-        "pace": "1313",
-        "station": {
-          "id": 1,
-          "name": "maszyna do robiena plecow",
-          "color": "FF0000"
-        }
-      },
-      "when_finished": "2022-03-01T10:00:00.000Z",
+      "when_finished": "Tue Mar 01 2022 11:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
       "is_finished": true
     }
   ]
 }
 ```
+
+`mosquitto_pub -h iot-proj.swisz.cz -p 1883 -t get/task -m "330923611457" -u "iot" -P "G516cD8#rSb£"`
 
 `confirm/task` - confirm finished task
 
