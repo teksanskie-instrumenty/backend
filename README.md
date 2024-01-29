@@ -46,6 +46,10 @@ allow_anonymous false
     {
       "id": "password",
       "value": "Test123!"
+    },
+    {
+      "id": "card_id",
+      "value": "330923611457"
     }
   ]
 }
@@ -63,10 +67,6 @@ allow_anonymous false
     {
       "id": "password",
       "value": "Test123!"
-    },
-    {
-      "id": "card_id",
-      "value": "330923611457"
     }
   ]
 }
