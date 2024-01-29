@@ -61,7 +61,11 @@ supertokens.init({
                     },
                     {
                         id: "password"
-                    }]
+                    },
+                    {
+                        id: "card_id"
+                    },
+                ]
             },
             override: {
                 apis: (originalImplementation) => {
@@ -81,8 +85,9 @@ supertokens.init({
 
                                 let userId = response.user.id;
                                 let nickValue = formFields.find(field => field.id === 'nick')?.value;
+                                const cardId = formFields.find(field => field.id === 'card_id')?.value;
                                 if (userId && nickValue) {
-                                    await myDataSource.query('INSERT INTO "user"(id, nick) VALUES($1, $2)', [userId, nickValue]);
+                                    await myDataSource.query('INSERT INTO "user"(id, nick, cardId) VALUES($1, $2, $3)', [userId, nickValue, cardId]);
                                 }
                             }
                             return response;
