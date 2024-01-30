@@ -88,7 +88,7 @@ supertokens.init({
                                 const cardId = formFields.find(field => field.id === 'card_id')?.value;
                                 if (userId && nickValue) {
                                     await myDataSource.query('INSERT INTO "user"(id, nick, card_id) VALUES($1, $2, $3)', [userId, nickValue, cardId]);
-                                    await myDataSource.query('INSERT INTO "weekly_plan"(user_id) VALUES($1) RETURNING id', [userId]);
+                                    await myDataSource.query('INSERT INTO weekly_plan("userId", "mondayId", "tuesdayId", "wednesdayId", "thursdayId", "fridayId", "saturdayId", "sundayId") VALUES($1, 0, 0, 0, 0, 0, 0, 0) RETURNING id', [userId]);
                                 }
                             }
                             return response;
